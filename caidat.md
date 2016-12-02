@@ -378,13 +378,13 @@ swift-ring-builder account.builder \
 
 ```sh
 swift-ring-builder account.builder \
-  add --region 1 --zone 1 --ip 10.10.10.151 --port 6002 \
+  add --region 1 --zone 2 --ip 10.10.10.151 --port 6002 \
   --device sdb --weight 100
 ```
 
 ```sh
 swift-ring-builder account.builder \
-  add --region 1 --zone 1 --ip 10.10.10.151 --port 6002 \
+  add --region 1 --zone 2 --ip 10.10.10.151 --port 6002 \
   --device sdc --weight 100
 ```
 
@@ -424,12 +424,12 @@ swift-ring-builder container.builder add \
 
 ```sh
 swift-ring-builder container.builder add \
-  --region 1 --zone 1 --ip 10.10.10.151 --port 6001 --device sdb --weight 100
+  --region 1 --zone 2 --ip 10.10.10.151 --port 6001 --device sdb --weight 100
 ```
 
 ```sh
 swift-ring-builder container.builder add \
-  --region 1 --zone 1 --ip 10.10.10.151 --port 6001 --device sdc --weight 100
+  --region 1 --zone 2 --ip 10.10.10.151 --port 6001 --device sdc --weight 100
 ```
 
 - Xác thực lại nội dung của container ring
