@@ -1,7 +1,9 @@
 # Cài đặt Openstack Swift
 
 # Mục lục
-- [1. Mô hình cài đặt](#1)
+- [1. Mô hình cài đặt và các bước chuẩn bị](#1)
+	- [1.1 Mô hình cài đặt](#11)
+	- [1.2 Các bước chuẩn bị](#12)
 - [2. Cài đặt proxy service trên controller](#2)
 - [3. Cài đặt Storage node](#3)
 - [4. Cài đặt Ring](#4)
@@ -15,7 +17,127 @@
 =================================================
 
 <a name="1"></a>
-## 1. Mô hình cài đặt
+## 1. Mô hình cài đặt và các bước chuẩn bị
+
+<a name="1"></a>
+### 1.1 Mô hình cài đặt
+
+<img src="http://i.imgur.com/z8kwRh0.png">
+
+- Các máy chạy hệ điều hành Ubuntu 14.04
+
+- Chuẩn bị như sau
+	- Trên node controller
+	```sh
+	HĐH: Ubuntu server 14.04
+	2 card mạng: eth0(Hostonly):10.10.10.140, eth1(NAT): 172.16.69.140
+	2 Ổ cứng: Sda sử dụng để cài OS, Sdb sử dụng để setup LVM (gộp Cinder vào controller)
+	```
+	- Trên node Compute1
+	```sh
+	HĐH: Ubuntu server 14.04
+	2 card mạng: eth0(Hostonly):10.10.10.141, eth1(NAT): 172.16.69.141
+	1 ổ cứng
+	```
+	- Trên node1
+	```sh
+	HĐH: Ubuntu server 14.04
+	2 card mạng: eth0(Hostonly):10.10.10.150, eth1(NAT): 172.16.69.150
+	3 ổ cứng: 1 ổ cài OS, 2 ổ để lưu Object
+	```
+	- Trên node2
+	```sh
+	HĐH: Ubuntu server 14.04
+	2 card mạng: eth0(Hostonly):10.10.10.151, eth1(NAT): 172.16.69.151
+	3 ổ cứng: 1 ổ cài OS, 2 ổ lưu Object
+	```
+
+<a name="12"></a>
+### 1.2 Các bước chuẩn bị 
+#### Bước 1
+Cài đặt OpenStack theo [Script](https://github.com/congto/OpenStack-Mitaka-Scripts). Lựa chọn bản Openstack Mitaka sử dụng Openvswitch trên Ubuntu
+
+#### Bước 2: 
+Sửa lại các file `/etc/hostname` và `etc/hosts`
+- Trên node controller sửa file `/etc/hostname` như sau
+	```sh
+	controller
+	```
+	
+- Tương tự như node controller, các node khác cũng sửa ứng với tên máy, ở đây lần lượt là `compute1`, `node1` và `node2`
+	
+- Trên node controller sửa file `/etc/hosts` như sau
+	```sh
+	127.0.0.1       localhost controller
+	10.10.10.140    controller
+	10.10.10.141   compute1
+	10.10.10.150    node1
+	10.10.10.151    node2
+	```
+- Trên node compute1 sửa file `/etc/hosts` như sau
+	```sh
+	127.0.0.1       localhost compute1
+	10.10.10.140    controller
+	10.10.10.141   compute1
+	10.10.10.150    node1
+	10.10.10.151    node2
+	```
+	
+- Trên node1 sửa file `/etc/hosts` như sau
+	```sh
+	127.0.0.1       localhost node1
+	10.10.10.140    controller
+	10.10.10.141   compute1
+	10.10.10.150    node1
+	10.10.10.151    node2
+	```
+	
+- Trên node2 sửa file `/etc/hosts` như sau
+	```sh
+	127.0.0.1       localhost node2
+	10.10.10.140    controller
+	10.10.10.141   compute1
+	10.10.10.150    node1
+	10.10.10.151    node2
+	```
+- Chú ý: Ping (bằng IP hoặc hostname)qua lại giữa các node để kiểm tra</b>
+	
+#### Bước 3: Cài đặt dịch vụ NTP
+- Do chạy scrip nên trên 2 node controller và compute1 đã chạy sẵn dịch vụ này
+	
+- Trong mô hình này sẽ chạy dịch vụ NTP trên 2 node lưu trữ Object là `node1` và `node2`
+
+	- Tải gói cài đặt
+	```sh
+	apt-get install chrony
+	```
+	- Chỉnh sửa file cấu hình `/etc/chrony/chrony.conf`
+	```sh
+	server controller iburst
+	```
+	- Khởi động lại dịch vụ
+	```sh
+	service chrony restart
+	```
+### Bước 4: Tải các gói dịch vụ Openstack trên 2 node lưu trữ
+- Enable OpenStack Repository
+
+```sh
+apt-get install software-properties-common -y 
+add-apt-repository cloud-archive:mitaka
+```
+
+- Upgrade các gói phần mềm
+
+```sh
+apt-get update && apt-get dist-upgrade && init6 -y 
+```
+
+- Chạy các gói OpenStack client
+
+```sh
+apt-get install python-openstackclient -y
+```	
 
 
 <a name="2"></a>
@@ -252,7 +374,7 @@ curl -o /etc/swift/object-server.conf https://git.openstack.org/cgit/openstack/s
 	```sh
 	[DEFAULT]
 	...
-	bind_ip = MANAGEMENT_INTERFACE_IP_ADDRESS
+	bind_ip = 10.10.10.150
 	bind_port = 6002
 	user = swift
 	swift_dir = /etc/swift
