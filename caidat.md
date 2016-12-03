@@ -55,7 +55,9 @@
 <a name="12"></a>
 ### 1.2 Các bước chuẩn bị 
 #### Bước 1
-Cài đặt OpenStack theo [Script](https://github.com/congto/OpenStack-Mitaka-Scripts). Lựa chọn bản Openstack Mitaka sử dụng Openvswitch trên Ubuntu
+- Cài đặt OpenStack theo [Script](https://github.com/congto/OpenStack-Mitaka-Scripts). Lựa chọn bản Openstack Mitaka sử dụng Openvswitch trên Ubuntu
+
+- Lưu ý trong script phải sửa lại file `ctl-7-cinder-aio.sh` phải sửa lại ổ `vdb` thành `sdb`
 
 #### Bước 2: 
 Sửa lại các file `/etc/hostname` và `etc/hosts`
@@ -70,7 +72,7 @@ Sửa lại các file `/etc/hostname` và `etc/hosts`
 	```sh
 	127.0.0.1       localhost controller
 	10.10.10.140    controller
-	10.10.10.141   compute1
+	10.10.10.141	compute1
 	10.10.10.150    node1
 	10.10.10.151    node2
 	```
@@ -78,7 +80,7 @@ Sửa lại các file `/etc/hostname` và `etc/hosts`
 	```sh
 	127.0.0.1       localhost compute1
 	10.10.10.140    controller
-	10.10.10.141   compute1
+	10.10.10.141	compute1
 	10.10.10.150    node1
 	10.10.10.151    node2
 	```
@@ -87,7 +89,7 @@ Sửa lại các file `/etc/hostname` và `etc/hosts`
 	```sh
 	127.0.0.1       localhost node1
 	10.10.10.140    controller
-	10.10.10.141   compute1
+	10.10.10.141	compute1
 	10.10.10.150    node1
 	10.10.10.151    node2
 	```
@@ -96,7 +98,7 @@ Sửa lại các file `/etc/hostname` và `etc/hosts`
 	```sh
 	127.0.0.1       localhost node2
 	10.10.10.140    controller
-	10.10.10.141   compute1
+	10.10.10.141	compute1
 	10.10.10.150    node1
 	10.10.10.151    node2
 	```
