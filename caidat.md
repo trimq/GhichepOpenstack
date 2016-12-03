@@ -514,7 +514,7 @@ swift-ring-builder account.builder \
 ```sh
 swift-ring-builder account.builder
 ```
-
+Trong bước này có thể sẽ có output `Ring file account.ring.gz not found, probably it hasn't been written yet`. Đây không phải là lỗi mà do các file này chưa được update, bạn hãy sử dụng câu lệnh cân đối lại Ring (dưới đây) rồi kiểm tra lại
 - Cân đối lại Ring
 ```sh
 swift-ring-builder account.builder rebalance
@@ -615,6 +615,14 @@ swift-ring-builder object.builder rebalance
 
 #### Phân tán các file cấu hình ring
 Sao chép `account.ring.gz`, `container.ring.gz`, và `object.ring.gz` sang thư mục `etc/swift` của mỗi node lưu trữ
+```sh
+scp -r account.ring.gz container.ring.gz object.ring.gz root@10.10.10.150:/etc/swift
+```
+và
+```sh
+scp -r account.ring.gz container.ring.gz object.ring.gz root@10.10.10.151:/etc/swift
+```
+<b>Chú ý:</b> Nên vào các node lưu trữ để kiểm tra lại
 
 <a name="5"></a>
 ### 5. Hoàn thành các bước cài đặt
